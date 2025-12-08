@@ -1,0 +1,198 @@
+---
+description: Image handling patterns and default image mapping rules
+globs: *.ts,*.tsx
+---
+
+# Image Handling Rules
+
+## Image DTO Usage
+
+### Request DTOs (Input)
+
+When creating or updating entities that include images, always use [ImageDto](mdc:src/core/dtos/requests/image.dto.ts):
+
+```typescript
+import { ImageDto } from 'src/core/dtos/requests/image.dto';
+
+// In create DTOs
+@ApiProperty({
+  description: 'Image information',
+  type: ImageDto,
+  required: false,
+})
+@IsOptional()
+@ValidateNested()
+@Type(() => ImageDto)
+image?: ImageDto;
+
+// In update DTOs
+@ApiProperty({
+  description: 'Image information',
+  type: ImageDto,
+  required: false,
+})
+@IsOptional()
+@ValidateNested()
+@Type(() => ImageDto)
+image?: ImageDto;
+```
+
+### Entity Definition
+
+In entities, use [ImageDto](mdc:src/core/dtos/requests/image.dto.ts) for the image property:
+
+```typescript
+import { ImageDto } from 'src/core/dtos/requests/image.dto';
+
+@AutoMap()
+@Column({ type: 'jsonb', nullable: true })
+image?: ImageDto;
+```
+
+### Response DTOs (Output)
+
+For response DTOs, use [ImageResponseDto](mdc:src/core/dtos/responses/image-response.dto.ts):
+
+```typescript
+import { ImageResponseDto } from 'src/core/dtos/responses';
+
+@AutoMap()
+@ApiProperty({
+  description: 'Image information',
+  type: ImageResponseDto,
+  nullable: true,
+  required: false,
+})
+image?: ImageResponseDto;
+```
+
+## Default Image Mapping
+
+### When Images are Optional
+
+When mapping entities to response DTOs where the image property is optional, always use the appropriate default image mapping method from [CommonMappingHelpers](mdc:src/core/mapping-profiles/common-mapping.helpers.ts):
+
+```typescript
+import { CommonMappingHelpers } from 'src/core/mapping-profiles/common-mapping.helpers';
+
+// For profile images
+forMember(
+  (dest) => dest.image,
+  mapFrom((src) =>
+    CommonMappingHelpers.mapProfileImageWithDefault(src, 'User profile picture'),
+  ),
+),
+
+// For meal images
+forMember(
+  (dest) => dest.image,
+  mapFrom((src) =>
+    CommonMappingHelpers.mapMealImageWithDefault(src, 'Meal image'),
+  ),
+),
+
+// For plan images
+forMember(
+  (dest) => dest.image,
+  mapFrom((src) =>
+    CommonMappingHelpers.mapPlanImageWithDefault(src, 'Plan image'),
+  ),
+),
+
+// For generic images
+forMember(
+  (dest) => dest.image,
+  mapFrom((src) =>
+    CommonMappingHelpers.mapImageWithDefault(src, 'Default image'),
+  ),
+),
+```
+
+### Available Default Image Methods
+
+- `mapProfileImageWithDefault()` - For user profile images
+- `mapMealImageWithDefault()` - For meal images
+- `mapPlanImageWithDefault()` - For plan images
+- `mapImageWithDefault()` - For generic images
+
+## Environment Variables
+
+Configure default images using these environment variables:
+
+```env
+DEFAULT_PROFILE_IMAGE=https://your-cdn.com/images/default-profile.png
+DEFAULT_MEAL_IMAGE=https://your-cdn.com/images/default-meal.png
+DEFAULT_PLAN_IMAGE=https://your-cdn.com/images/default-plan.png
+DEFAULT_IMAGE=https://your-cdn.com/images/default-image.png
+```
+
+## Validation Rules
+
+- Always use `@IsOptional()` for image properties in DTOs
+- Always use `@ValidateNested()` and `@Type(() => ImageDto)` for nested image validation
+- Always use `nullable: true` in response DTOs for optional images
+- Always provide appropriate alt text for accessibility
+
+## Examples
+
+### Complete Entity with Image
+
+```typescript
+@Entity('plans')
+export class PlanEntity extends BaseEntity {
+  @AutoMap()
+  @Column()
+  name: string;
+
+  @AutoMap()
+  @Column({ type: 'jsonb', nullable: true })
+  image?: ImageDto;
+}
+```
+
+### Complete Create DTO with Image
+
+```typescript
+export class CreatePlanDto {
+  @ApiProperty({
+    description: 'Plan image information',
+    type: ImageDto,
+    required: false,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ImageDto)
+  image?: ImageDto;
+}
+```
+
+### Complete Response DTO with Image
+
+```typescript
+export class PlanResponseDto {
+  @AutoMap()
+  @ApiProperty({
+    description: 'Plan image information',
+    type: ImageResponseDto,
+    nullable: true,
+    required: false,
+  })
+  image?: ImageResponseDto;
+}
+```
+
+### Complete Mapping Profile with Default Image
+
+```typescript
+createMap(
+  mapper,
+  PlanEntity,
+  PlanResponseDto,
+  forMember(
+    (dest) => dest.image,
+    mapFrom((src) =>
+      CommonMappingHelpers.mapPlanImageWithDefault(src, 'Plan image'),
+    ),
+  ),
+);
+```

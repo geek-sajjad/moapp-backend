@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:5
+    container_name: nest_mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+
+  nest_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest_app
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      MONGO_URI: ${MONGO_URI}
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev # For development only
+
+volumes:
+  mongo_data:

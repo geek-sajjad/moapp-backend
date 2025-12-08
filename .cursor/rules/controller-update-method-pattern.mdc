@@ -1,0 +1,98 @@
+---
+globs: *.controller.ts
+description: Controller update method pattern - enforce PATCH over PUT for update operations
+---
+
+# Controller Update Method Pattern
+
+## Overview
+
+All update operations in controllers MUST use the `@Patch()` decorator instead of `@Put()` for partial updates.
+
+## HTTP Method Standards
+
+- **PATCH**: Use for partial updates (updating specific fields)
+- **PUT**: Avoid for update operations (reserved for complete resource replacement)
+
+## Requirements
+
+### 1. Update Method Decorator
+
+All update methods in controllers MUST use `@Patch(':id')`:
+
+```typescript
+@Patch(':id')
+@ApiOperation({ summary: 'Update [resource]' })
+@ApiResponseWithModel(ResourceResponseDto, 'Resource updated successfully')
+async update(
+  @Param('id', ParseUUIDPipe) id: string,
+  @Body() dto: UpdateResourceDto,
+): Promise<ResponseDto<ResourceResponseDto>> {
+  const result = await this.resourceService.update(id, dto);
+  return ResponseUtil.success('message.RESOURCE.UPDATE_SUCCESS', result);
+}
+```
+
+### 2. Method Naming
+
+- Update methods should be named `update`
+- Use descriptive parameter names (e.g., `id`, `userId`, `resourceId`)
+
+### 3. Swagger Documentation
+
+- Include `@ApiOperation` with summary
+- Use `@ApiResponseWithModel` for response documentation
+- Include `@ApiParam` for path parameters when needed
+
+### 4. Response Pattern
+
+- Use `ResponseUtil.success()` with appropriate message key
+- Follow the message internationalization pattern: `'message.MODULE.UPDATE_SUCCESS'`
+
+## Examples
+
+### ✅ Correct Implementation
+
+```typescript
+@Patch(':id')
+@Roles(RoleEnum.ADMIN)
+@ApiOperation({ summary: 'Update tier information' })
+@ApiResponseWithModel(TierResponseDto, 'Tier updated successfully')
+async update(
+  @Param('id', ParseUUIDPipe) id: string,
+  @Body() dto: UpdateTierDto,
+): Promise<ResponseDto<TierResponseDto>> {
+  const result = await this.tierService.update(id, dto);
+  return ResponseUtil.success('message.TIER.UPDATE_SUCCESS', result);
+}
+```
+
+### ❌ Incorrect Implementation
+
+```typescript
+@Put(':id')  // ❌ Should be @Patch(':id')
+@ApiOperation({ summary: 'Update a CMS page' })
+async update(
+  @Param('id', ParseUUIDCustomPipe) id: string,
+  @Body() updateDto: UpdateCmsPageDto,
+) {
+  const page = await this.cmsService.update(id, updateDto);
+  return ResponseUtil.singleData(page);
+}
+```
+
+## Migration Guidelines
+
+When converting existing `@Put()` methods to `@Patch()`:
+
+1. Change `@Put(':id')` to `@Patch(':id')`
+2. Ensure the method name remains `update`
+3. Verify response patterns follow the established standards
+4. Update Swagger documentation if needed
+
+## Rationale
+
+- **PATCH** is semantically correct for partial updates
+- **PUT** should be reserved for complete resource replacement
+- Consistent use of PATCH improves API clarity and follows REST conventions
+- Better alignment with HTTP standards and client expectations

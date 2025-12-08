@@ -1,0 +1,113 @@
+---
+globs: **/controllers/*.ts
+description: Controller response patterns and standards
+---
+
+# Controller Response Pattern Standards
+
+All NestJS controllers must follow consistent response patterns using `ResponseUtil` for standardized API responses.
+
+## Required Imports
+
+Controllers must import these core utilities:
+
+```typescript
+import { ResponseDto } from 'src/core/dtos/responses';
+import { ResponseUtil } from 'src/core/utilities';
+import { ApiResponseWithModel } from 'src/core/decorators';
+import { ApiOperation } from '@nestjs/swagger';
+```
+
+## Method Return Types
+
+All controller methods must return wrapped responses:
+
+### For Single Entity Results
+
+```typescript
+async methodName(): Promise<ResponseDto<EntityResponseDto>> {
+  const result = await this.service.methodName();
+  return ResponseUtil.success('message.ENTITY.ACTION', result);
+}
+```
+
+### For Array Results
+
+```typescript
+async methodName(): Promise<ResponseDto<EntityResponseDto[]>> {
+  const result = await this.service.methodName();
+  return ResponseUtil.success('message.ENTITY.RETRIEVED', result);
+}
+```
+
+### For Boolean Results (Delete operations)
+
+```typescript
+async delete(): Promise<ResponseDto<boolean>> {
+  const result = await this.service.delete();
+  return ResponseUtil.success('message.ENTITY.DELETED', result);
+}
+```
+
+## ResponseUtil.success Usage Rules
+
+Based on [user.controller.ts](mdc:src/modules/user/controllers/user.controller.ts):
+
+1. **GET methods (Read operations)**: For fetching single entities, include message:
+
+   ```typescript
+   return ResponseUtil.success('message.ENTITY.GET_ENTITY', result);
+   ```
+
+2. **GET methods (Read operations)**: For fetching arrays/lists, include message:
+
+   ```typescript
+   return ResponseUtil.success('message.ENTITY.RETRIEVED', result);
+   ```
+
+3. **POST methods (Create operations)**: Always include success message:
+
+   ```typescript
+   return ResponseUtil.success('message.ENTITY.CREATED', result);
+   ```
+
+4. **PATCH/PUT methods (Update operations)**: Always include success message:
+
+   ```typescript
+   return ResponseUtil.success('message.ENTITY.UPDATE_SUCCEED', result);
+   ```
+
+5. **DELETE methods**: Always include success message:
+   ```typescript
+   return ResponseUtil.success('message.ENTITY.DELETE_SUCCESS', result);
+   ```
+
+## Swagger Documentation Requirements
+
+Every controller method must include:
+
+1. **@ApiOperation** with summary
+2. **@ApiResponseWithModel** with proper response DTO
+
+Example:
+
+```typescript
+@Post()
+@ApiOperation({ summary: 'Create new entity' })
+@ApiResponseWithModel(EntityResponseDto, 'Create new entity')
+async create(@Body() dto: CreateEntityDto): Promise<ResponseDto<EntityResponseDto>> {
+  const result = await this.service.create(dto);
+  return ResponseUtil.success('message.ENTITY.CREATED', result);
+}
+```
+
+## Formatting Standards
+
+- Use proper line breaks for complex decorators
+- Maintain consistent parameter formatting
+- Use async/await for all service calls
+- Include proper TypeScript return types
+
+## Example Reference
+
+See [user.controller.ts](mdc:src/modules/user/controllers/user.controller.ts) for complete implementation examples following these patterns.
