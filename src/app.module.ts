@@ -1,11 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import {
-  AcceptLanguageResolver,
-  HeaderResolver,
-  I18nModule,
-} from 'nestjs-i18n';
-import * as path from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -54,6 +48,13 @@ import { CamelCaseNamingConvention } from '@automapper/core';
       useFactory: (configService: ConfigService) =>
         configPostgres(configService), // Use the PostgreSQL factory function
     }),
+
+    // MongoDB integration (commented out - using PostgreSQL for accounting app)
+    // MongooseModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => configMongo(configService),
+    // }),
 
     // AutoMapper integration for serlizing entities
     AutomapperModule.forRoot({

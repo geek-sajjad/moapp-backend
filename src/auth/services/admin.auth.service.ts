@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   AdminLoginDto,
   // AdminRegisterDto,
-  ResetPasswordDto,
+  AdminResetPasswordDto,
 } from '../dtos/requests';
 import { TokenService } from './token.service';
 import {
@@ -139,7 +139,9 @@ export class AdminAuthService {
     }
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<boolean> {
+  async resetPassword(
+    resetPasswordDto: AdminResetPasswordDto,
+  ): Promise<boolean> {
     const { email, password, confirmPassword } = resetPasswordDto;
 
     const verifiedToken = this.tokenService.validateToken(
@@ -165,6 +167,7 @@ export class AdminAuthService {
     }
 
     // Update user password
-    return this.userService.updatePassword(user.id, password);
+    await this.userService.update(user.id, { password });
+    return true;
   }
 }

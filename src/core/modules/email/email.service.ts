@@ -5,7 +5,6 @@ import { MailtrapClient } from 'mailtrap';
 
 import { Language } from 'src/core/enums/';
 import { ClientException } from 'src/core/exceptions';
-import * as nodemailer from 'nodemailer';
 import { EmailTemplates } from './constants';
 import { EmailDto } from './dto/email-dto';
 import { EmailSender } from './interfaces/email-sender.interface';

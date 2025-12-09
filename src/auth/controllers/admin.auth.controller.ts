@@ -7,9 +7,9 @@ import { ResponseUtil } from 'src/core/utilities';
 import { AdminAuthService } from '../services';
 import {
   AdminLoginDto,
-  ForgotPasswordDto,
+  AdminForgotPasswordDto,
   RefreshTokenDto,
-  ResetPasswordDto,
+  AdminResetPasswordDto,
 } from '../dtos/requests';
 import {
   AdminLoginResponseDto,
@@ -65,7 +65,7 @@ export class AdminAuthController {
   @HttpCode(200)
   @Post('forgot-password')
   async forgotPassword(
-    @Body() forgotPasswordDto: ForgotPasswordDto,
+    @Body() forgotPasswordDto: AdminForgotPasswordDto,
   ): Promise<void> {
     await this.adminAuthService.forgotPassword(forgotPasswordDto.email);
   }
@@ -74,7 +74,7 @@ export class AdminAuthController {
   @HttpCode(200)
   @Post('reset-password')
   async resetPassword(
-    @Body() resetPasswordDto: ResetPasswordDto,
+    @Body() resetPasswordDto: AdminResetPasswordDto,
   ): Promise<void> {
     await this.adminAuthService.resetPassword(resetPasswordDto);
   }

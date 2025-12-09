@@ -30,7 +30,38 @@
       "INVALID": "Invalid OTP.",
       "LOCKED_OUT": "Too many attempts. Locked for {LOCK_DURATION} minutes.",
       "ATTEMPT_EXCEEDED": "Too many failed attempts. Locked for {LOCK_DURATION} minutes.",
-      "VALIDATION_SUCCEED": "OTP validation succeed"
+      "VALIDATION_SUCCEED": "OTP validation succeed",
+      "PASSWORD_RESET_CODE": "Your password reset code is: {code}",
+      "VERIFIED": "OTP verified successfully"
     }
+  },
+  "USER": {
+    "CREATED": "User created successfully",
+    "GET_USER": "User retrieved successfully",
+    "RETRIEVED": "Users retrieved successfully",
+    "UPDATE_SUCCEED": "User updated successfully",
+    "DELETE_SUCCESS": "User deleted successfully",
+    "NOT_FOUND": "User not found",
+    "USERNAME_EXISTS": "Username already exists",
+    "EMAIL_EXISTS": "Email already exists",
+    "PHONE_EXISTS": "Phone number already exists"
+  },
+  "CONTACT": {
+    "CREATED": "Contact created successfully",
+    "GET_CONTACT": "Contact retrieved successfully",
+    "RETRIEVED": "Contacts retrieved successfully",
+    "UPDATE_SUCCEED": "Contact updated successfully",
+    "DELETE_SUCCESS": "Contact deleted successfully",
+    "NOT_FOUND": "Contact not found",
+    "FORBIDDEN": "You don't have permission to access this contact"
+  },
+  "TRANSACTION": {
+    "CREATED": "Transaction created successfully",
+    "GET_TRANSACTION": "Transaction retrieved successfully",
+    "RETRIEVED": "Transactions retrieved successfully",
+    "UPDATE_SUCCEED": "Transaction updated successfully",
+    "DELETE_SUCCESS": "Transaction deleted successfully",
+    "NOT_FOUND": "Transaction not found",
+    "SUMMARY_RETRIEVED": "Transaction summary retrieved successfully"
   }
 }

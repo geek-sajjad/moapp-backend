@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SortOrder } from 'src/core/enums/sort.enum';
 import { ClientException } from 'src/core/exceptions/client.exception';
 import { QueryFailedError } from 'typeorm';
 import { Faq } from '../entities';

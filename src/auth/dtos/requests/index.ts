@@ -6,3 +6,7 @@ export * from './verify-otp.dto';
 export * from './auth-signup.dto';
 export * from './forget-password.dto';
 export * from './reset-password.dto';
+export * from './login.request.dto';
+export * from './register.request.dto';
+export * from './admin-reset-password.dto';
+export * from './admin-forgot-password.dto';

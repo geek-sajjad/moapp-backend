@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsEnum, IsArray, ArrayMaxSize } from 'class-validator';
+import { IsOptional, IsEnum } from 'class-validator';
 import { ImageSize } from '../constant/image.constant';
 
 export class BulkUploadImageRequestDto {

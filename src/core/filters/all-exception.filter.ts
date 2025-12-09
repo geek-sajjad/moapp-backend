@@ -9,7 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
 import * as moment from 'moment';
-import { ClientException, ForeignKeyConstraintException } from '../exceptions';
+import { ClientException } from '../exceptions';
 import { ENVIRONMENTS } from '../enums';
 
 @Catch()
