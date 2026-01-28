@@ -1,8 +1,8 @@
 {
-  "name": "backend-template",
+  "name": "daftar-moein",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Sajad Sohrabi",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

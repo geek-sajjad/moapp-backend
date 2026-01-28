@@ -24,5 +24,5 @@ export const configSwagger = (
     },
   };
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('documentation', app, document, customOptions);
+  SwaggerModule.setup('docs', app, document, customOptions);
 };

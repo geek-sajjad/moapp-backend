@@ -3,9 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
-// import { EventEmitterModule } from '@nestjs/event-emitter';
-// import { ScheduleModule } from '@nestjs/schedule';
-
 import { LIST_OF_MODULES } from './modules/module-names';
 import { configPostgres } from './config';
 import { LIST_OF_CORE_MODULES } from './core/modules/core-module-names';
@@ -19,8 +16,6 @@ import { CamelCaseNamingConvention } from '@automapper/core';
     ...LIST_OF_CORE_MODULES,
 
     ConfigModule.forRoot({ isGlobal: true }),
-    // EventEmitterModule.forRoot(),
-    // ScheduleModule.forRoot(),
 
 
     ThrottlerModule.forRoot([
