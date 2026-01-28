@@ -1,102 +1,74 @@
-import {
-  Injectable,
-  NotFoundException,
-  Inject,
-  forwardRef,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../entities';
 import { TransactionRepository } from '../repositories';
-import { CreateTransactionDto, UpdateTransactionDto } from '../dto/requests';
+import { CreateTransactionDto } from '../dto/requests';
 import { TransactionSummaryDto } from '../dto/responses';
-import { ContactService } from 'src/modules/contact/services';
+import { CustomerService } from 'src/modules/customer/services';
 
 @Injectable()
 export class TransactionService {
   constructor(
     @InjectRepository(TransactionEntity)
     private readonly transactionRepository: TransactionRepository,
-    @Inject(forwardRef(() => ContactService))
-    private readonly contactService: ContactService,
+    private readonly customerService: CustomerService,
   ) {}
 
   async create(
     userId: string,
     createDto: CreateTransactionDto,
   ): Promise<TransactionEntity> {
-    // Verify that the contact belongs to the user
-    await this.contactService.verifyOwnership(createDto.contactId, userId);
+    // Verify that the customer belongs to the user
+    await this.customerService.findOne(createDto.customerId, userId);
 
-    const transaction = this.transactionRepository.create(createDto);
+    const transaction = this.transactionRepository.create({
+      ...createDto,
+      userId,
+      debitAmount: createDto.debitAmount || 0,
+      creditAmount: createDto.creditAmount || 0,
+    });
     return this.transactionRepository.save(transaction);
   }
 
-  async findAllByContact(
-    contactId: string,
+  async findAllByCustomer(
+    customerId: string,
     userId: string,
   ): Promise<TransactionEntity[]> {
-    // Verify that the contact belongs to the user
-    await this.contactService.verifyOwnership(contactId, userId);
+    // Verify that the customer belongs to the user
+    await this.customerService.findOne(customerId, userId);
 
-    return this.transactionRepository.findByContactId(contactId);
+    return this.transactionRepository.findByCustomerId(customerId);
   }
 
   async findOne(
     id: string,
-    contactId: string,
+    customerId: string,
     userId: string,
   ): Promise<TransactionEntity> {
-    // Verify that the contact belongs to the user
-    await this.contactService.verifyOwnership(contactId, userId);
+    // Verify that the customer belongs to the user
+    await this.customerService.findOne(customerId, userId);
 
-    const transaction = await this.transactionRepository.findByIdAndContactId(
+    const transaction = await this.transactionRepository.findByIdAndCustomerId(
       id,
-      contactId,
+      customerId,
     );
 
     if (!transaction) {
-      throw new NotFoundException('message.TRANSACTION.NOT_FOUND');
+      throw new NotFoundException('Transaction not found');
     }
 
     return transaction;
   }
 
-  async update(
-    id: string,
-    contactId: string,
-    userId: string,
-    updateDto: UpdateTransactionDto,
-  ): Promise<TransactionEntity> {
-    const transaction = await this.findOne(id, contactId, userId);
-
-    Object.assign(transaction, updateDto);
-    return this.transactionRepository.save(transaction);
-  }
-
-  async delete(
-    id: string,
-    contactId: string,
-    userId: string,
-  ): Promise<boolean> {
-    // Verify ownership first
-    await this.findOne(id, contactId, userId);
-
-    const deleted = await this.transactionRepository.deleteById(id);
-    if (!deleted) {
-      throw new NotFoundException('message.TRANSACTION.NOT_FOUND');
-    }
-    return deleted;
-  }
-
-  async getContactSummary(
-    contactId: string,
+  async getCustomerSummary(
+    customerId: string,
     userId: string,
   ): Promise<TransactionSummaryDto> {
-    // Verify that the contact belongs to the user
-    await this.contactService.verifyOwnership(contactId, userId);
+    // Verify that the customer belongs to the user
+    await this.customerService.findOne(customerId, userId);
 
     const summary =
-      await this.transactionRepository.getContactBalance(contactId);
+      await this.transactionRepository.getCustomerBalance(customerId);
 
     return summary;
   }

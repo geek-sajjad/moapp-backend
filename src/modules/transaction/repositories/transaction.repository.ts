@@ -1,53 +1,39 @@
 import { DataSource } from 'typeorm';
 import { BaseRepository } from 'src/core/repositories/base.repository';
 import { TransactionEntity } from '../entities';
-import { TransactionTypeEnum } from '../enums';
 
 export class TransactionRepository extends BaseRepository<TransactionEntity> {
   constructor(dataSource: DataSource) {
     super(dataSource, TransactionEntity);
   }
 
-  async findByContactId(contactId: string): Promise<TransactionEntity[]> {
+  async findByCustomerId(customerId: string): Promise<TransactionEntity[]> {
     return this.find({
-      where: { contactId },
+      where: { customerId },
       order: { date: 'DESC', createdAt: 'DESC' },
     });
   }
 
-  async findByIdAndContactId(
+  async findByIdAndCustomerId(
     id: string,
-    contactId: string,
+    customerId: string,
   ): Promise<TransactionEntity | null> {
     return this.findOne({
-      where: { id, contactId },
+      where: { id, customerId },
     });
   }
 
-  async deleteById(id: string): Promise<boolean> {
-    const result = await super.delete(id);
-    return result.affected > 0;
-  }
-
-  async getContactBalance(contactId: string): Promise<{
+  async getCustomerBalance(customerId: string): Promise<{
     totalCredit: number;
     totalDebit: number;
     balance: number;
     totalTransactions: number;
   }> {
     const result = await this.createQueryBuilder('transaction')
-      .select(
-        'SUM(CASE WHEN transaction.type = :credit THEN transaction.amount ELSE 0 END)',
-        'totalCredit',
-      )
-      .addSelect(
-        'SUM(CASE WHEN transaction.type = :debit THEN transaction.amount ELSE 0 END)',
-        'totalDebit',
-      )
+      .select('SUM(transaction.creditAmount)', 'totalCredit')
+      .addSelect('SUM(transaction.debitAmount)', 'totalDebit')
       .addSelect('COUNT(*)', 'totalTransactions')
-      .where('transaction.contactId = :contactId', { contactId })
-      .setParameter('credit', TransactionTypeEnum.CREDIT)
-      .setParameter('debit', TransactionTypeEnum.DEBIT)
+      .where('transaction.customerId = :customerId', { customerId })
       .getRawOne();
 
     const totalCredit = parseFloat(result?.totalCredit || '0');
@@ -70,19 +56,10 @@ export class TransactionRepository extends BaseRepository<TransactionEntity> {
     totalTransactions: number;
   }> {
     const result = await this.createQueryBuilder('transaction')
-      .innerJoin('transaction.contact', 'contact')
-      .select(
-        'SUM(CASE WHEN transaction.type = :credit THEN transaction.amount ELSE 0 END)',
-        'totalCredit',
-      )
-      .addSelect(
-        'SUM(CASE WHEN transaction.type = :debit THEN transaction.amount ELSE 0 END)',
-        'totalDebit',
-      )
+      .select('SUM(transaction.creditAmount)', 'totalCredit')
+      .addSelect('SUM(transaction.debitAmount)', 'totalDebit')
       .addSelect('COUNT(*)', 'totalTransactions')
-      .where('contact.userId = :userId', { userId })
-      .setParameter('credit', TransactionTypeEnum.CREDIT)
-      .setParameter('debit', TransactionTypeEnum.DEBIT)
+      .where('transaction.userId = :userId', { userId })
       .getRawOne();
 
     const totalCredit = parseFloat(result?.totalCredit || '0');

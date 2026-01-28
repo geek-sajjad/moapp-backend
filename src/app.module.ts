@@ -22,17 +22,6 @@ import { CamelCaseNamingConvention } from '@automapper/core';
     // EventEmitterModule.forRoot(),
     // ScheduleModule.forRoot(),
 
-    // I18nModule.forRoot({
-    //   fallbackLanguage: 'en', // Default language
-    //   loaderOptions: {
-    //     path: path.join(__dirname, '/i18n/'),
-    //     watch: false,
-    //   },
-    //   resolvers: [
-    //     new HeaderResolver(['lang', 'language']),
-    //     AcceptLanguageResolver,
-    //   ],
-    // }),
 
     ThrottlerModule.forRoot([
       {
@@ -49,12 +38,6 @@ import { CamelCaseNamingConvention } from '@automapper/core';
         configPostgres(configService), // Use the PostgreSQL factory function
     }),
 
-    // MongoDB integration (commented out - using PostgreSQL for accounting app)
-    // MongooseModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (configService: ConfigService) => configMongo(configService),
-    // }),
 
     // AutoMapper integration for serlizing entities
     AutomapperModule.forRoot({

@@ -76,10 +76,6 @@ npm run start
 |   |   |-- /filters          # Directory for all the global filters
 |   |   |-- /interceptors     # Directory for all the global interceptors
 |   |   |-- /utils            # Directory for all the global utils
-|   |-- /i18n         # Directory contain language files for localizations
-|   |   |-- /en        # English localization file
-|   |   |-- /ar   # Arabic  localization file
-|   |   |-- /fr          # French  localization file
 |-- /common         # Directory for project related code required by multiple modules (global)
 |   |   |-- /filters        # Directory for all the global filters
 |   |   |-- /interceptors   # Directory for all the global interceptors
@@ -126,16 +122,14 @@ yarn start:prod
 
 1. Authentication: The project uses various authentication strategies, including JWT for user facing APIs and API key authentication for third parties (for e.g. WhatsApp bot).
 
-2. **Internationalization**: Implemented using nestjs-i18n for multi-language support.
+2. **Push Notifications**: [Firebase Cloud Messaging](https://github.com/factiveteam/factive-backend/blob/staging/src/common/utils/push-notifications.ts) is used for sending push notifications.
 
-3. **Push Notifications**: [Firebase Cloud Messaging](https://github.com/factiveteam/factive-backend/blob/staging/src/common/utils/push-notifications.ts) is used for sending push notifications.
+3. **Logging**: [Custom logging service](https://github.com/factiveteam/factive-backend/blob/staging/src/common/utils/logger/.ts) for better debugging and monitoring.
 
-4. **Logging**: [Custom logging service](https://github.com/factiveteam/factive-backend/blob/staging/src/common/utils/logger/.ts) for better debugging and monitoring.
+4. **Exception Handling**: [Global exception filter](https://github.com/factiveteam/factive-backend/blob/staging/src/common/filters/exception-filter.ts) for consistent error responses.
+5. **Email Sending**: The [Email Service](https://github.com/factiveteam/factive-backend/blob/staging/src/common/utils/email/email.service.ts) uses Mailtrap to send emails (templates are defined on Mailtrap UI).
 
-5. **Exception Handling**: [Global exception filter](https://github.com/factiveteam/factive-backend/blob/staging/src/common/filters/exception-filter.ts) for consistent error responses.
-6. **Email Sending**: The [Email Service](https://github.com/factiveteam/factive-backend/blob/staging/src/common/utils/email/email.service.ts) uses Mailtrap to send emails (templates are defined on Mailtrap UI).
-
-7. **Database**: MongoDB integration using Mongoose.
+6. **Database**: MongoDB integration using Mongoose.
 
 For more detailed information on specific modules or functionalities, refer to the respective files in the project structure.
 
@@ -147,7 +141,6 @@ For more detailed information on specific modules or functionalities, refer to t
 - Firebase Admin SDK for push notifications
 - Mailtrap for sending emails
 - Swagger for API documentation
-- nestjs-i18n for internationalization
 
 ## Deployment
 

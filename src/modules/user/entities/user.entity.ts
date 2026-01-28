@@ -1,8 +1,8 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/core/entities';
 import { AutoMap } from '@automapper/classes';
-import { RoleEnum } from 'src/core/enums';
-import { ContactEntity } from 'src/modules/contact/entities';
+import { CustomerEntity } from 'src/modules/customer/entities';
+import { TransactionEntity } from 'src/modules/transaction/entities';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -11,36 +11,19 @@ export class UserEntity extends BaseEntity {
   username: string;
 
   @AutoMap()
-  @Column({ unique: true, nullable: true })
-  email?: string;
+  @Column()
+  fullName: string;
 
   @AutoMap()
   @Column({ unique: true })
   phoneNumber: string;
 
-  @AutoMap()
-  @Column()
-  fullName: string;
-
   @Column()
   password: string;
 
-  @AutoMap()
-  @Column({
-    type: 'enum',
-    enum: RoleEnum,
-    default: RoleEnum.USER,
-  })
-  role: RoleEnum;
+  @OneToMany(() => CustomerEntity, (customer) => customer.user)
+  customers: CustomerEntity[];
 
-  @AutoMap()
-  @Column({ default: true })
-  isActive: boolean;
-
-  @Column({ nullable: true })
-  firebaseToken?: string;
-
-  @AutoMap()
-  @OneToMany(() => ContactEntity, (contact) => contact.user)
-  contacts: ContactEntity[];
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
+  transactions: TransactionEntity[];
 }

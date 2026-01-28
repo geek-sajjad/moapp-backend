@@ -2,23 +2,32 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
-  IsEnum,
   IsOptional,
   IsNumber,
   IsDateString,
   Min,
 } from 'class-validator';
-import { TransactionTypeEnum } from '../../enums';
 
 export class CreateTransactionDto {
   @ApiProperty({
-    description: 'Transaction amount',
+    description: 'Debit amount (money out)',
     example: 50000,
+    default: 0,
   })
   @IsNumber({}, { message: 'validation.MUST_BE_NUMBER' })
   @Min(0, { message: 'validation.MIN_0' })
-  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  amount: number;
+  @IsOptional()
+  debitAmount?: number;
+
+  @ApiProperty({
+    description: 'Credit amount (money in)',
+    example: 30000,
+    default: 0,
+  })
+  @IsNumber({}, { message: 'validation.MUST_BE_NUMBER' })
+  @Min(0, { message: 'validation.MIN_0' })
+  @IsOptional()
+  creditAmount?: number;
 
   @ApiProperty({
     description: 'Transaction date',
@@ -27,15 +36,6 @@ export class CreateTransactionDto {
   @IsDateString({}, { message: 'validation.INVALID_DATE' })
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
   date: string;
-
-  @ApiProperty({
-    description: 'Transaction type (DEBIT: I owe them, CREDIT: They owe me)',
-    enum: TransactionTypeEnum,
-    example: TransactionTypeEnum.CREDIT,
-  })
-  @IsEnum(TransactionTypeEnum, { message: 'validation.INVALID_ENUM' })
-  @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  type: TransactionTypeEnum;
 
   @ApiProperty({
     description: 'Transaction description or note',
@@ -47,10 +47,10 @@ export class CreateTransactionDto {
   description?: string;
 
   @ApiProperty({
-    description: 'Contact ID',
+    description: 'Customer ID',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @IsString({ message: 'validation.IS_STRING' })
   @IsNotEmpty({ message: 'validation.NOT_EMPTY' })
-  contactId: string;
+  customerId: string;
 }

@@ -2,11 +2,10 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
-  Delete,
   Body,
   Param,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -14,14 +13,11 @@ import {
   ApiTags,
   ApiParam,
 } from '@nestjs/swagger';
-import { ResponseDto } from 'src/core/dtos/responses';
-import { ResponseUtil } from 'src/core/utilities';
 import { AuthGuard } from 'src/core/guards';
-import { ParseUUIDCustomPipe } from 'src/core/pipes';
 import { CurrentUser } from 'src/auth/decorators';
 import { UserPayload } from 'src/core/types';
 import { TransactionService } from '../services';
-import { CreateTransactionDto, UpdateTransactionDto } from '../dto/requests';
+import { CreateTransactionDto } from '../dto/requests';
 import {
   TransactionResponseDto,
   TransactionSummaryDto,
@@ -39,12 +35,8 @@ export class TransactionController {
   async create(
     @CurrentUser() user: UserPayload,
     @Body() createDto: CreateTransactionDto,
-  ): Promise<ResponseDto<TransactionResponseDto>> {
-    const transaction = await this.transactionService.create(
-      user.id,
-      createDto,
-    );
-    return ResponseUtil.success('message.TRANSACTION.CREATED', transaction);
+  ): Promise<TransactionResponseDto> {
+    return await this.transactionService.create(user.id, createDto);
   }
 
   @Get('summary')
@@ -53,56 +45,44 @@ export class TransactionController {
   })
   async getUserTotalSummary(
     @CurrentUser() user: UserPayload,
-  ): Promise<ResponseDto<TransactionSummaryDto>> {
-    const summary = await this.transactionService.getUserTotalSummary(user.id);
-    return ResponseUtil.success(
-      'message.TRANSACTION.SUMMARY_RETRIEVED',
-      summary,
-    );
+  ): Promise<TransactionSummaryDto> {
+    return await this.transactionService.getUserTotalSummary(user.id);
   }
 
-  @Get('contact/:contactId')
-  @ApiOperation({ summary: 'Get all transactions for a contact' })
+  @Get('customer/:customerId')
+  @ApiOperation({ summary: 'Get all transactions for a customer' })
   @ApiParam({
-    name: 'contactId',
-    description: 'Contact ID',
+    name: 'customerId',
+    description: 'Customer ID',
     type: 'string',
     format: 'uuid',
   })
-  async findAllByContact(
+  async findAllByCustomer(
     @CurrentUser() user: UserPayload,
-    @Param('contactId', ParseUUIDCustomPipe) contactId: string,
-  ): Promise<ResponseDto<TransactionResponseDto[]>> {
-    const transactions = await this.transactionService.findAllByContact(
-      contactId,
-      user.id,
-    );
-    return ResponseUtil.success('message.TRANSACTION.RETRIEVED', transactions);
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ): Promise<TransactionResponseDto[]> {
+    return await this.transactionService.findAllByCustomer(customerId, user.id);
   }
 
-  @Get('contact/:contactId/summary')
-  @ApiOperation({ summary: 'Get transaction summary for a contact' })
+  @Get('customer/:customerId/summary')
+  @ApiOperation({ summary: 'Get transaction summary for a customer' })
   @ApiParam({
-    name: 'contactId',
-    description: 'Contact ID',
+    name: 'customerId',
+    description: 'Customer ID',
     type: 'string',
     format: 'uuid',
   })
-  async getContactSummary(
+  async getCustomerSummary(
     @CurrentUser() user: UserPayload,
-    @Param('contactId', ParseUUIDCustomPipe) contactId: string,
-  ): Promise<ResponseDto<TransactionSummaryDto>> {
-    const summary = await this.transactionService.getContactSummary(
-      contactId,
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ): Promise<TransactionSummaryDto> {
+    return await this.transactionService.getCustomerSummary(
+      customerId,
       user.id,
-    );
-    return ResponseUtil.success(
-      'message.TRANSACTION.SUMMARY_RETRIEVED',
-      summary,
     );
   }
 
-  @Get(':id/contact/:contactId')
+  @Get(':id/customer/:customerId')
   @ApiOperation({ summary: 'Get transaction by ID' })
   @ApiParam({
     name: 'id',
@@ -111,79 +91,16 @@ export class TransactionController {
     format: 'uuid',
   })
   @ApiParam({
-    name: 'contactId',
-    description: 'Contact ID',
+    name: 'customerId',
+    description: 'Customer ID',
     type: 'string',
     format: 'uuid',
   })
   async findOne(
     @CurrentUser() user: UserPayload,
-    @Param('id', ParseUUIDCustomPipe) id: string,
-    @Param('contactId', ParseUUIDCustomPipe) contactId: string,
-  ): Promise<ResponseDto<TransactionResponseDto>> {
-    const transaction = await this.transactionService.findOne(
-      id,
-      contactId,
-      user.id,
-    );
-    return ResponseUtil.success(
-      'message.TRANSACTION.GET_TRANSACTION',
-      transaction,
-    );
-  }
-
-  @Patch(':id/contact/:contactId')
-  @ApiOperation({ summary: 'Update transaction' })
-  @ApiParam({
-    name: 'id',
-    description: 'Transaction ID',
-    type: 'string',
-    format: 'uuid',
-  })
-  @ApiParam({
-    name: 'contactId',
-    description: 'Contact ID',
-    type: 'string',
-    format: 'uuid',
-  })
-  async update(
-    @CurrentUser() user: UserPayload,
-    @Param('id', ParseUUIDCustomPipe) id: string,
-    @Param('contactId', ParseUUIDCustomPipe) contactId: string,
-    @Body() updateDto: UpdateTransactionDto,
-  ): Promise<ResponseDto<TransactionResponseDto>> {
-    const transaction = await this.transactionService.update(
-      id,
-      contactId,
-      user.id,
-      updateDto,
-    );
-    return ResponseUtil.success(
-      'message.TRANSACTION.UPDATE_SUCCEED',
-      transaction,
-    );
-  }
-
-  @Delete(':id/contact/:contactId')
-  @ApiOperation({ summary: 'Delete transaction' })
-  @ApiParam({
-    name: 'id',
-    description: 'Transaction ID',
-    type: 'string',
-    format: 'uuid',
-  })
-  @ApiParam({
-    name: 'contactId',
-    description: 'Contact ID',
-    type: 'string',
-    format: 'uuid',
-  })
-  async remove(
-    @CurrentUser() user: UserPayload,
-    @Param('id', ParseUUIDCustomPipe) id: string,
-    @Param('contactId', ParseUUIDCustomPipe) contactId: string,
-  ): Promise<ResponseDto<boolean>> {
-    const result = await this.transactionService.delete(id, contactId, user.id);
-    return ResponseUtil.success('message.TRANSACTION.DELETE_SUCCESS', result);
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ): Promise<TransactionResponseDto> {
+    return await this.transactionService.findOne(id, customerId, user.id);
   }
 }

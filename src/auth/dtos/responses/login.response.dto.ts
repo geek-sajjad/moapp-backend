@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RoleEnum } from 'src/core/enums';
 
 export class LoginResponseDto {
   @ApiProperty({
@@ -32,15 +31,7 @@ export class LoginResponseDto {
   })
   fullName: string;
 
-  @ApiProperty({
-    example: RoleEnum.USER,
-    description: 'The user role',
-    enum: RoleEnum,
-  })
-  role: RoleEnum;
-
   constructor(partial: Partial<LoginResponseDto>) {
     Object.assign(this, partial);
   }
 }
-

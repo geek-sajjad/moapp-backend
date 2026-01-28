@@ -1,11 +1,5 @@
-import { RoleEnum } from 'src/core/enums';
-
 export class UserPayload {
   id: string;
-
-  role: RoleEnum;
-
-  email?: string;
 
   phoneNumber?: string;
 

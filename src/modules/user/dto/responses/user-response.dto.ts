@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from '@automapper/classes';
-import { RoleEnum } from 'src/core/enums';
 
 export class UserResponseDto {
   @AutoMap()
@@ -19,21 +18,6 @@ export class UserResponseDto {
 
   @AutoMap()
   @ApiProperty({
-    description: 'Email address',
-    example: 'john@example.com',
-    nullable: true,
-  })
-  email?: string;
-
-  @AutoMap()
-  @ApiProperty({
-    description: 'Phone number',
-    example: '+989123456789',
-  })
-  phoneNumber: string;
-
-  @AutoMap()
-  @ApiProperty({
     description: 'Full name',
     example: 'John Doe',
   })
@@ -41,18 +25,10 @@ export class UserResponseDto {
 
   @AutoMap()
   @ApiProperty({
-    description: 'User role',
-    enum: RoleEnum,
-    example: RoleEnum.USER,
+    description: 'Phone number',
+    example: '+989123456789',
   })
-  role: RoleEnum;
-
-  @AutoMap()
-  @ApiProperty({
-    description: 'Account active status',
-    example: true,
-  })
-  isActive: boolean;
+  phoneNumber: string;
 
   @AutoMap()
   @ApiProperty({

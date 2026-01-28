@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { RoleEnum } from 'src/core/enums';
 import { v4 as uuidv4 } from 'uuid';
 import { UserPayload } from 'src/core/types';
 import { TokenTypeEnum } from '../enums';
@@ -32,19 +31,25 @@ export class TokenService {
     );
   }
 
-  generateAccessToken(id: string, role: RoleEnum): string {
+  generateAccessToken(id: string): string {
     const jti = uuidv4();
     return this.jwtService.sign(
-      { id, role, jti, type: TokenTypeEnum.ACCESS },
-      { secret: this.jwtSecret, expiresIn: this.accessTokenExpiration },
+      { id, jti, type: TokenTypeEnum.ACCESS },
+      {
+        secret: this.jwtSecret,
+        expiresIn: this.accessTokenExpiration as any,
+      },
     );
   }
 
-  generateRefreshToken(sub: string, role: RoleEnum): string {
+  generateRefreshToken(sub: string): string {
     const jti = uuidv4();
     return this.jwtService.sign(
-      { sub, role, jti, type: TokenTypeEnum.REFRESH },
-      { secret: this.jwtSecret, expiresIn: this.refreshTokenExpiration },
+      { sub, jti, type: TokenTypeEnum.REFRESH },
+      {
+        secret: this.jwtSecret,
+        expiresIn: this.refreshTokenExpiration as any,
+      },
     );
   }
 
@@ -53,7 +58,6 @@ export class TokenService {
       const options: JwtVerifyOptions = { secret: this.jwtSecret };
       const verified = this.jwtService.verify<{
         id: string;
-        role: RoleEnum;
         jti: string;
         type: TokenTypeEnum;
       }>(token, options);
@@ -81,8 +85,8 @@ export class TokenService {
       throw new UnauthorizedException('message.AUTH.INVALID_TOKEN');
     }
 
-    const newAccessToken = this.generateAccessToken(payload.id, payload.role);
-    const newRefreshToken = this.generateRefreshToken(payload.id, payload.role);
+    const newAccessToken = this.generateAccessToken(payload.id);
+    const newRefreshToken = this.generateRefreshToken(payload.id);
 
     return {
       accessToken: newAccessToken,
@@ -94,7 +98,10 @@ export class TokenService {
     const jti = uuidv4();
     return this.jwtService.sign(
       { phoneNumber, jti, type: TokenTypeEnum.OTP_TMP_TOKEN },
-      { secret: this.jwtSecret, expiresIn: this.temporaryTokenExpiration },
+      {
+        secret: this.jwtSecret,
+        expiresIn: this.temporaryTokenExpiration as any,
+      },
     );
   }
 
@@ -103,7 +110,6 @@ export class TokenService {
       const options: JwtVerifyOptions = { secret: this.jwtSecret };
       const verified = this.jwtService.verify<{
         id: string;
-        role: RoleEnum;
         jti: string;
         type: TokenTypeEnum;
       }>(token, options);

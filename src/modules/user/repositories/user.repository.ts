@@ -11,10 +11,6 @@ export class UserRepository extends BaseRepository<UserEntity> {
     return this.findOne({ where: { username } });
   }
 
-  async findByEmail(email: string): Promise<UserEntity | null> {
-    return this.findOne({ where: { email } });
-  }
-
   async findByPhoneNumber(phoneNumber: string): Promise<UserEntity | null> {
     return this.findOne({ where: { phoneNumber } });
   }
