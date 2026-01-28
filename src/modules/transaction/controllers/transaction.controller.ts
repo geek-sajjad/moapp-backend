@@ -13,7 +13,7 @@ import {
   ApiTags,
   ApiParam,
 } from '@nestjs/swagger';
-import { AuthGuard } from 'src/core/guards';
+import { AuthGuard, SubscriptionGuard } from 'src/core/guards';
 import { CurrentUser } from 'src/auth/decorators';
 import { UserPayload } from 'src/core/types';
 import { TransactionService } from '../services';
@@ -22,15 +22,17 @@ import {
   TransactionResponseDto,
   TransactionSummaryDto,
 } from '../dto/responses';
+import { RequireActiveSubscription } from 'src/core/decorators';
 
 @ApiTags('Transactions')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, SubscriptionGuard)
 @ApiBearerAuth()
 @Controller('transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post()
+  @RequireActiveSubscription()
   @ApiOperation({ summary: 'Create a new transaction' })
   async create(
     @CurrentUser() user: UserPayload,

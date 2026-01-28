@@ -8,6 +8,7 @@ import * as bcrypt from 'bcryptjs';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
 import { CreateUserDto, UpdateUserDto } from '../dto/requests';
+import { UserResponseDto } from '../dto/responses';
 
 @Injectable()
 export class UserService {
@@ -56,6 +57,22 @@ export class UserService {
       throw new NotFoundException('message.USER.NOT_FOUND');
     }
     return user;
+  }
+
+  /**
+   * Map UserEntity to UserResponseDto with subscription status
+   */
+  private mapToResponseDto(user: UserEntity): UserResponseDto {
+    const dto = new UserResponseDto();
+    dto.id = user.id;
+    dto.username = user.username;
+    dto.fullName = user.fullName;
+    dto.phoneNumber = user.phoneNumber;
+    dto.subscriptionEndDate = user.subscriptionEndDate;
+    dto.isSubscriptionActive = user.isSubscriptionActive();
+    dto.createdAt = user.createdAt;
+    dto.updatedAt = user.updatedAt;
+    return dto;
   }
 
   async findUser(where: Partial<UserEntity>): Promise<UserEntity> {

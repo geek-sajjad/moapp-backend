@@ -17,18 +17,20 @@ import {
 import { CustomerService } from '../services';
 import { CreateCustomerDto, UpdateCustomerDto } from '../dto/requests';
 import { CustomerResponseDto } from '../dto/responses';
-import { AuthGuard } from 'src/core/guards';
+import { AuthGuard, SubscriptionGuard } from 'src/core/guards';
 import { CurrentUser } from 'src/auth/decorators';
 import { UserPayload } from 'src/core/types';
+import { RequireActiveSubscription } from 'src/core/decorators';
 
 @ApiTags('Customers')
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, SubscriptionGuard)
 @Controller('customers')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
   @Post()
+  @RequireActiveSubscription()
   @ApiOperation({ summary: 'Create a new customer' })
   async create(
     @CurrentUser() user: UserPayload,
@@ -65,6 +67,7 @@ export class CustomerController {
   }
 
   @Patch(':id')
+  @RequireActiveSubscription()
   @ApiOperation({ summary: 'Update customer name or phone number' })
   async update(
     @CurrentUser() user: UserPayload,
@@ -75,6 +78,7 @@ export class CustomerController {
   }
 
   @Patch(':id/archive')
+  @RequireActiveSubscription()
   @ApiOperation({ summary: 'Archive customer' })
   async archive(
     @CurrentUser() user: UserPayload,
@@ -84,6 +88,7 @@ export class CustomerController {
   }
 
   @Patch(':id/unarchive')
+  @RequireActiveSubscription()
   @ApiOperation({ summary: 'Unarchive customer' })
   async unarchive(
     @CurrentUser() user: UserPayload,

@@ -21,9 +21,23 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
+  @AutoMap()
+  @Column({ type: 'timestamp', nullable: true })
+  subscriptionEndDate: Date | null;
+
   @OneToMany(() => CustomerEntity, (customer) => customer.user)
   customers: CustomerEntity[];
 
   @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
   transactions: TransactionEntity[];
+
+  /**
+   * Check if user's subscription is active
+   */
+  isSubscriptionActive(): boolean {
+    if (!this.subscriptionEndDate) {
+      return false;
+    }
+    return new Date() <= new Date(this.subscriptionEndDate);
+  }
 }

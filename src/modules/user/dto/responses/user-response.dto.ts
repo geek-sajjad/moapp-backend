@@ -32,6 +32,21 @@ export class UserResponseDto {
 
   @AutoMap()
   @ApiProperty({
+    description: 'Subscription end date',
+    example: '2024-12-31T23:59:59.000Z',
+    nullable: true,
+    required: false,
+  })
+  subscriptionEndDate: Date | null;
+
+  @ApiProperty({
+    description: 'Whether the subscription is currently active',
+    example: true,
+  })
+  isSubscriptionActive: boolean;
+
+  @AutoMap()
+  @ApiProperty({
     description: 'Creation date',
     example: '2024-01-01T00:00:00.000Z',
   })

@@ -4,3 +4,4 @@ export * from './current-user.decorator';
 export * from './file-upload-swagger.decorator';
 export * from './single-file-upload.decorator';
 export * from './multi-file-upload.decorator';
+export * from './require-active-subscription.decorator';
