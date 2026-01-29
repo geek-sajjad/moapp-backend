@@ -3,7 +3,6 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import * as bcrypt from 'bcryptjs';
@@ -15,14 +14,14 @@ import {
   ExtendSubscriptionDto,
 } from '../dto/requests';
 import { AdminResponseDto, UserResponseDto } from '../dto/responses';
+import { addDaysToDate } from 'src/core/utilities';
 
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectRepository(UserAdminEntity)
     private readonly adminRepository: UserAdminRepository,
-    @InjectRepository(UserEntity)
     private readonly userRepository: UserRepository,
+
     @InjectMapper()
     private readonly mapper: Mapper,
   ) {}
@@ -174,7 +173,16 @@ export class AdminService {
       throw new NotFoundException('message.USER.NOT_FOUND');
     }
 
-    user.subscriptionEndDate = extendDto.subscriptionEndDate;
+    // if(!user.subscriptionEndDate){
+
+    // }
+
+    const extendedDate = addDaysToDate(
+      user.subscriptionEndDate ?? new Date(),
+      extendDto.days,
+    );
+
+    user.subscriptionEndDate = extendedDate;
     const updatedUser = await this.userRepository.save(user);
     return this.mapper.map(updatedUser, UserEntity, UserResponseDto);
   }

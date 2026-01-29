@@ -13,6 +13,7 @@ import { HttpInterceptor } from 'src/core/interceptors';
 import { configSwagger } from './swagger.config';
 import { configCors } from './cors.config';
 import { CommonMappingHelpers } from '../core/mapping-profiles/common-mapping.helpers';
+import { ENVIRONMENTS } from 'src/core/enums';
 // import { configFirebase } from './firebase.config';
 
 export async function ConfigApp(
@@ -50,5 +51,6 @@ export async function ConfigApp(
 
   // Global Interceptors
 
-  app.useGlobalInterceptors(new HttpInterceptor());
+  if (nodeEnv !== ENVIRONMENTS.LOCAL)
+    app.useGlobalInterceptors(new HttpInterceptor());
 }

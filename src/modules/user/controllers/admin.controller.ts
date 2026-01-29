@@ -9,11 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { AdminService } from '../services';
+import { AdminService, UserService } from '../services';
 import {
   CreateAdminDto,
   UpdateAdminDto,
   ExtendSubscriptionDto,
+  CreateUserDto,
 } from '../dto/requests';
 import { AdminResponseDto, UserResponseDto } from '../dto/responses';
 import { ResponseDto } from 'src/core/dtos/responses';
@@ -27,7 +28,10 @@ import { ParamAsUUID } from 'src/core/dtos/requests/uuid-param.request.dto';
 @Controller('admin')
 @UseGuards(AdminAuthGuard)
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly userService: UserService,
+  ) {}
 
   // ==================== Admin Management ====================
 
@@ -88,6 +92,16 @@ export class AdminController {
   async getAllUsers(): Promise<ResponseDto<UserResponseDto[]>> {
     const result = await this.adminService.getAllUsers();
     return ResponseUtil.success('message.USER.RETRIEVED', result);
+  }
+
+  @Post('users')
+  @ApiOperation({ summary: 'create user (Admin)' })
+  @ApiResponseWithModel([UserResponseDto], 'Create user')
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<ResponseDto<UserResponseDto>> {
+    const result = await this.userService.create(createUserDto);
+    return ResponseUtil.success('message.USER.CREATED', result);
   }
 
   @Get('users/:id')

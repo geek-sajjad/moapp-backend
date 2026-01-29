@@ -1,0 +1,971 @@
+{
+  "info": {
+    "name": "Daftar Moein API",
+    "description": "Complete API collection for Daftar Moein backend application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "daftar-moein-api",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:2686",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminAccessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "transactionId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "User Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.data && response.data.accessToken) {",
+                  "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user@example.com\",\n  \"password\": \"Password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with username and password"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.data && response.data.accessToken) {",
+                  "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            },
+            "description": "Refresh access token"
+          },
+          "response": []
+        }
+      ],
+      "description": "User authentication endpoints"
+    },
+    {
+      "name": "Admin Auth",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.data && response.data.accessToken) {",
+                  "    pm.collectionVariables.set('adminAccessToken', response.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin@12345\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "admin", "login"]
+            },
+            "description": "Admin login with username and password"
+          },
+          "response": []
+        }
+      ],
+      "description": "Admin authentication endpoints"
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me"]
+            },
+            "description": "Get current user profile (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Current User Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"phoneNumber\": \"+989123456789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me"]
+            },
+            "description": "Update current user profile (requires authentication)"
+          },
+          "response": []
+        }
+      ],
+      "description": "User profile endpoints"
+    },
+    {
+      "name": "Admin Management",
+      "item": [
+        {
+          "name": "Admin CRUD",
+          "item": [
+            {
+              "name": "Create Admin",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const response = pm.response.json();",
+                      "if (response.data && response.data.id) {",
+                      "    pm.collectionVariables.set('adminId', response.data.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"newadmin\",\n  \"email\": \"newadmin@example.com\",\n  \"password\": \"Admin@12345\",\n  \"fullName\": \"New Admin\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/admins",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "admins"]
+                },
+                "description": "Create new admin (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Admins",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/admins",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "admins"]
+                },
+                "description": "Get all admins (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Admin By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/admins/{{adminId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "admins", "{{adminId}}"]
+                },
+                "description": "Get admin by ID (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Admin",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Updated Admin Name\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/admins/{{adminId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "admins", "{{adminId}}"]
+                },
+                "description": "Update admin (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Admin",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/admins/{{adminId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "admins", "{{adminId}}"]
+                },
+                "description": "Delete admin (requires admin authentication)"
+              },
+              "response": []
+            }
+          ],
+          "description": "Admin CRUD operations"
+        },
+        {
+          "name": "User Management",
+          "item": [
+            {
+              "name": "Get All Users",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/users",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "users"]
+                },
+                "description": "Get all users (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get User By ID",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/users/{{userId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "users", "{{userId}}"]
+                },
+                "description": "Get user by ID (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/users/{{userId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "users", "{{userId}}"]
+                },
+                "description": "Delete user (requires admin authentication)"
+              },
+              "response": []
+            }
+          ],
+          "description": "User management by admin"
+        },
+        {
+          "name": "Subscription Management",
+          "item": [
+            {
+              "name": "Extend Subscription",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"days\": 30\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/subscriptions/extend",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "subscriptions", "extend"]
+                },
+                "description": "Extend user subscription (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Revoke Subscription",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/subscriptions/revoke/{{userId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "subscriptions", "revoke", "{{userId}}"]
+                },
+                "description": "Revoke user subscription (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Users With Active Subscriptions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/subscriptions/active",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "subscriptions", "active"]
+                },
+                "description": "Get users with active subscriptions (requires admin authentication)"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Users With Expired Subscriptions",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminAccessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/admin/subscriptions/expired",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "subscriptions", "expired"]
+                },
+                "description": "Get users with expired subscriptions (requires admin authentication)"
+              },
+              "response": []
+            }
+          ],
+          "description": "Subscription management by admin"
+        }
+      ],
+      "description": "Admin management endpoints (requires admin authentication)"
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "Create Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response && response.id) {",
+                  "    pm.collectionVariables.set('customerId', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Customer Name\",\n  \"phoneNumber\": \"+989123456789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers"]
+            },
+            "description": "Create a new customer (requires authentication and active subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/customers?includeArchived=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers"],
+              "query": [
+                {
+                  "key": "includeArchived",
+                  "value": "false",
+                  "description": "Include archived customers"
+                }
+              ]
+            },
+            "description": "Get all customers (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/customers/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "{{customerId}}"]
+            },
+            "description": "Get customer by ID (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Customer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Customer Name\",\n  \"phoneNumber\": \"+989123456789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "{{customerId}}"]
+            },
+            "description": "Update customer name or phone number (requires authentication and active subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Customer",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/customers/{{customerId}}/archive",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "{{customerId}}", "archive"]
+            },
+            "description": "Archive customer (requires authentication and active subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Unarchive Customer",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/customers/{{customerId}}/unarchive",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "{{customerId}}", "unarchive"]
+            },
+            "description": "Unarchive customer (requires authentication and active subscription)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Customer management endpoints (requires authentication and active subscription)"
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Create Transaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response && response.id) {",
+                  "    pm.collectionVariables.set('transactionId', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"amount\": 1000000,\n  \"type\": \"CREDIT\",\n  \"description\": \"Payment received\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions"]
+            },
+            "description": "Create a new transaction (requires authentication and active subscription)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Total Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "summary"]
+            },
+            "description": "Get total summary of all transactions for current user (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transactions By Customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/customer/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "customer", "{{customerId}}"]
+            },
+            "description": "Get all transactions for a customer (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/customer/{{customerId}}/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "customer", "{{customerId}}", "summary"]
+            },
+            "description": "Get transaction summary for a customer (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/{{transactionId}}/customer/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "transactions",
+                "{{transactionId}}",
+                "customer",
+                "{{customerId}}"
+              ]
+            },
+            "description": "Get transaction by ID (requires authentication)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Transaction management endpoints (requires authentication and active subscription)"
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Health check endpoint"
+          },
+          "response": []
+        },
+        {
+          "name": "Memory Usage",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/memory",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "memory"]
+            },
+            "description": "Get memory usage"
+          },
+          "response": []
+        }
+      ],
+      "description": "Health check endpoints"
+    },
+    {
+      "name": "Versioning",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "API index endpoint"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Versions",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/versioning",
+              "host": ["{{baseUrl}}"],
+              "path": ["versioning"]
+            },
+            "description": "Get all versions"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Version",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"version\": \"1.0.1\",\n  \"forceUpdate\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/versioning",
+              "host": ["{{baseUrl}}"],
+              "path": ["versioning"]
+            },
+            "description": "Add a new version"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Latest Version",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/versioning/latest",
+              "host": ["{{baseUrl}}"],
+              "path": ["versioning", "latest"]
+            },
+            "description": "Get latest version"
+          },
+          "response": []
+        }
+      ],
+      "description": "API versioning endpoints"
+    },
+    {
+      "name": "Mock",
+      "item": [
+        {
+          "name": "Get Mock Service Worker",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/mockServiceWorker.js",
+              "host": ["{{baseUrl}}"],
+              "path": ["mockServiceWorker.js"]
+            },
+            "description": "Get mock service worker file"
+          },
+          "response": []
+        }
+      ],
+      "description": "Mock service worker endpoint"
+    }
+  ]
+}

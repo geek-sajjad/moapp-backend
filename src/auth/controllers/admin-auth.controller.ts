@@ -18,6 +18,7 @@ export class AdminAuthController {
   async adminLogin(
     @Body() dto: LoginDto,
   ): Promise<ResponseDto<LoginResponseDto>> {
+    console.log(dto);
     const response = await this.authService.adminLogin(dto);
     return ResponseUtil.success<LoginResponseDto>(
       'message.AUTH.LOGIN_SUCCESS',

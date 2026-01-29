@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ExtendSubscriptionDto {
@@ -12,11 +12,10 @@ export class ExtendSubscriptionDto {
   userId: string;
 
   @ApiProperty({
-    description: 'New subscription end date',
-    example: '2026-12-31T23:59:59.999Z',
+    description: 'days',
+    example: '22',
   })
   @IsNotEmpty()
-  @IsDate()
-  @Type(() => Date)
-  subscriptionEndDate: Date;
+  @IsNumber()
+  days: number;
 }

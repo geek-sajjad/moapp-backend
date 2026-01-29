@@ -3,7 +3,6 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import * as bcrypt from 'bcryptjs';
@@ -15,7 +14,6 @@ import { UserResponseDto } from '../dto/responses';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
     private readonly userRepository: UserRepository,
     @InjectMapper()
     private readonly mapper: Mapper,
