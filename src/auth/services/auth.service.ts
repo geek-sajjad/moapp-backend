@@ -1,20 +1,15 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { UserService } from 'src/modules/user/services';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserService, AdminService } from 'src/modules/user/services';
 import { TokenService } from './token.service';
 import { LoginDto } from '../dtos/requests';
-import {
-  RefreshTokenResponseDto,
-  LoginResponseDto,
-} from '../dtos/responses';
+import { RefreshTokenResponseDto, LoginResponseDto } from '../dtos/responses';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
+    private readonly adminService: AdminService,
     private readonly tokenService: TokenService,
   ) {}
 
@@ -33,8 +28,8 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const { username, password } = loginDto;
 
-    // Find user by username
-    const user = await this.userService.findUser({ username });
+    // Find user by username (need raw entity for password comparison)
+    const user = await this.userService.findUserEntityForAuth({ username });
 
     if (!user) {
       throw new UnauthorizedException('message.AUTH.INVALID_CREDENTIALS');
@@ -59,4 +54,40 @@ export class AuthService {
     });
   }
 
+  async adminLogin(loginDto: LoginDto): Promise<LoginResponseDto> {
+    const { username, password } = loginDto;
+
+    // Find admin by username
+    const admin = await this.adminService.findAdminByUsername(username);
+
+    if (!admin) {
+      throw new UnauthorizedException('message.AUTH.INVALID_CREDENTIALS');
+    }
+
+    // Check if admin is active
+    if (!admin.isActive) {
+      throw new UnauthorizedException('message.AUTH.ACCOUNT_DISABLED');
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('message.AUTH.INVALID_CREDENTIALS');
+    }
+
+    // Generate admin tokens (separate from user tokens)
+    const accessToken = this.tokenService.generateAdminAccessToken(
+      admin.id,
+      admin.email,
+    );
+    const refreshToken = this.tokenService.generateAdminRefreshToken(admin.id);
+
+    return new LoginResponseDto({
+      accessToken,
+      refreshToken,
+      userId: admin.id,
+      username: admin.username,
+      fullName: admin.fullName,
+    });
+  }
 }

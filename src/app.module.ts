@@ -17,7 +17,6 @@ import { CamelCaseNamingConvention } from '@automapper/core';
 
     ConfigModule.forRoot({ isGlobal: true }),
 
-
     ThrottlerModule.forRoot([
       {
         ttl: 60 * 1000,
@@ -32,7 +31,6 @@ import { CamelCaseNamingConvention } from '@automapper/core';
       useFactory: (configService: ConfigService) =>
         configPostgres(configService), // Use the PostgreSQL factory function
     }),
-
 
     // AutoMapper integration for serlizing entities
     AutomapperModule.forRoot({

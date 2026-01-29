@@ -7,9 +7,9 @@ import { configJWT } from 'src/config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ActionLogModule } from 'src/core/modules/action-log/action-log.module';
 import { AuthService } from './services/auth.service';
-import { AuthController } from './controllers/auth.controller';
+import { AuthController, AdminAuthController } from './controllers';
 import { TokenService } from './services/token.service';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy, JwtAdminStrategy } from './strategies';
 
 @Global()
 @Module({
@@ -20,12 +20,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        configJWT(configService),
+      useFactory: (configService: ConfigService) => configJWT(configService),
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, TokenService, JwtStrategy],
+  controllers: [AuthController, AdminAuthController],
+  providers: [AuthService, TokenService, JwtStrategy, JwtAdminStrategy],
   exports: [JwtModule, AuthService, PassportModule],
 })
 export class AuthModule {}

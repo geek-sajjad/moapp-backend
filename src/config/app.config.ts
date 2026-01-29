@@ -9,9 +9,7 @@ import {
   AllExceptionsFilter,
 } from 'src/core/filters';
 import { CustomValidationPipe } from 'src/common/pipes';
-import {
-  HttpInterceptor,
-} from 'src/core/interceptors';
+import { HttpInterceptor } from 'src/core/interceptors';
 import { configSwagger } from './swagger.config';
 import { configCors } from './cors.config';
 import { CommonMappingHelpers } from '../core/mapping-profiles/common-mapping.helpers';
@@ -38,8 +36,6 @@ export async function ConfigApp(
 
   // cors configuration
   configCors(app, configService);
-
-
 
   // initialize CommonMappingHelpers with ConfigService
   CommonMappingHelpers.initialize(configService);

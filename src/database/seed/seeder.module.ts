@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configPostgres } from 'src/config';
-import { UserEntity } from 'src/modules/user/entities';
-// import { ProviderEntity } from 'src/modules/provider/entities';
+import { UserEntity, UserAdminEntity } from 'src/modules/user/entities';
 import { SeedRunner } from './seed.runner';
 import { ProdSeeder } from './prod.seeder';
 
@@ -16,7 +15,7 @@ import { ProdSeeder } from './prod.seeder';
       useFactory: (configService: ConfigService) =>
         configPostgres(configService), // Use the PostgreSQL factory function
     }),
-    TypeOrmModule.forFeature([UserEntity,]),
+    TypeOrmModule.forFeature([UserEntity, UserAdminEntity]),
   ],
   providers: [ProdSeeder, SeedRunner],
   exports: [SeedRunner],

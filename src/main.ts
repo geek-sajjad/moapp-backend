@@ -13,12 +13,10 @@ function logMemory(stage: string) {
 }
 
 async function bootstrap() {
-
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
   ConfigApp(app, configService);
-
 
   await app.listen(configService.get('APP_PORT'), () => {
     logMemory('STARTUP - After app.listen (Ready)');

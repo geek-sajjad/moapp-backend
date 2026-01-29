@@ -4,6 +4,8 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
 import * as bcrypt from 'bcryptjs';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
@@ -15,9 +17,11 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: UserRepository,
+    @InjectMapper()
+    private readonly mapper: Mapper,
   ) {}
 
-  async create(createDto: CreateUserDto): Promise<UserEntity> {
+  async create(createDto: CreateUserDto): Promise<UserResponseDto> {
     // Check if username already exists
     const existingUsername = await this.userRepository.findByUsername(
       createDto.username,
@@ -42,45 +46,41 @@ export class UserService {
       password: hashedPassword,
     });
 
-    return this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(user);
+    return this.mapper.map(savedUser, UserEntity, UserResponseDto);
   }
 
-  async findAll(): Promise<UserEntity[]> {
-    return this.userRepository.find({
+  async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.userRepository.find({
       order: { createdAt: 'DESC' },
     });
+    return this.mapper.mapArray(users, UserEntity, UserResponseDto);
   }
 
-  async findOne(id: string): Promise<UserEntity> {
+  async findOne(id: string): Promise<UserResponseDto> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('message.USER.NOT_FOUND');
     }
-    return user;
+    return this.mapper.map(user, UserEntity, UserResponseDto);
   }
 
-  /**
-   * Map UserEntity to UserResponseDto with subscription status
-   */
-  private mapToResponseDto(user: UserEntity): UserResponseDto {
-    const dto = new UserResponseDto();
-    dto.id = user.id;
-    dto.username = user.username;
-    dto.fullName = user.fullName;
-    dto.phoneNumber = user.phoneNumber;
-    dto.subscriptionEndDate = user.subscriptionEndDate;
-    dto.isSubscriptionActive = user.isSubscriptionActive();
-    dto.createdAt = user.createdAt;
-    dto.updatedAt = user.updatedAt;
-    return dto;
-  }
-
-  async findUser(where: Partial<UserEntity>): Promise<UserEntity> {
+  async findUser(where: Partial<UserEntity>): Promise<UserResponseDto> {
     const user = await this.userRepository.findOne({ where });
     if (!user) {
       throw new NotFoundException('message.USER.NOT_FOUND');
     }
-    return user;
+    return this.mapper.map(user, UserEntity, UserResponseDto);
+  }
+
+  /**
+   * Internal method to find user entity for authentication purposes
+   * Returns raw entity including password field
+   */
+  async findUserEntityForAuth(
+    where: Partial<UserEntity>,
+  ): Promise<UserEntity | null> {
+    return this.userRepository.findOne({ where });
   }
 
   async findByPhoneNumber(phoneNumber: string): Promise<UserEntity | null> {
@@ -91,8 +91,12 @@ export class UserService {
     return this.userRepository.findByPhoneNumber(phoneNumber);
   }
 
-  async update(id: string, updateDto: UpdateUserDto): Promise<UserEntity> {
-    const user = await this.findOne(id);
+  async update(id: string, updateDto: UpdateUserDto): Promise<UserResponseDto> {
+    // Find the user entity directly (not the DTO)
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('message.USER.NOT_FOUND');
+    }
 
     // Check username uniqueness if being updated
     if (updateDto.username && updateDto.username !== user.username) {
@@ -121,7 +125,8 @@ export class UserService {
     }
 
     Object.assign(user, updateData);
-    return this.userRepository.save(user);
+    const updatedUser = await this.userRepository.save(user);
+    return this.mapper.map(updatedUser, UserEntity, UserResponseDto);
   }
 
   async delete(id: string): Promise<boolean> {

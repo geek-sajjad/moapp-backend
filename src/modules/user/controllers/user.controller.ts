@@ -1,26 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiTags,
-  ApiParam,
-} from '@nestjs/swagger';
+import { Controller, Get, Patch, Body, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResponseDto } from 'src/core/dtos/responses';
 import { ResponseUtil } from 'src/core/utilities';
 import { AuthGuard } from 'src/core/guards';
 import { CurrentUser } from 'src/auth/decorators';
 import { UserPayload } from 'src/core/types';
 import { UserService } from '../services';
-import { CreateUserDto, UpdateUserDto } from '../dto/requests';
+import { UpdateUserDto } from '../dto/requests';
 import { UserResponseDto } from '../dto/responses';
 
 @ApiTags('Users')

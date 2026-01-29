@@ -5,6 +5,6 @@ export const configJWT = (configService: ConfigService) => ({
   signOptions: {
     expiresIn: configService.getOrThrow<string>(
       'ACCESS_TOKEN_EXPIRATION',
-    ) as any,
+    ) as unknown as number,
   },
 });

@@ -37,7 +37,7 @@ export class TokenService {
       { id, jti, type: TokenTypeEnum.ACCESS },
       {
         secret: this.jwtSecret,
-        expiresIn: this.accessTokenExpiration as any,
+        expiresIn: this.accessTokenExpiration as unknown as number,
       },
     );
   }
@@ -48,7 +48,29 @@ export class TokenService {
       { sub, jti, type: TokenTypeEnum.REFRESH },
       {
         secret: this.jwtSecret,
-        expiresIn: this.refreshTokenExpiration as any,
+        expiresIn: this.refreshTokenExpiration as unknown as number,
+      },
+    );
+  }
+
+  generateAdminAccessToken(id: string, email: string): string {
+    const jti = uuidv4();
+    return this.jwtService.sign(
+      { id, jti, type: TokenTypeEnum.ACCESS, email },
+      {
+        secret: this.jwtSecret,
+        expiresIn: this.accessTokenExpiration as unknown as number,
+      },
+    );
+  }
+
+  generateAdminRefreshToken(sub: string): string {
+    const jti = uuidv4();
+    return this.jwtService.sign(
+      { sub, jti, type: TokenTypeEnum.REFRESH },
+      {
+        secret: this.jwtSecret,
+        expiresIn: this.refreshTokenExpiration as unknown as number,
       },
     );
   }
@@ -100,7 +122,7 @@ export class TokenService {
       { phoneNumber, jti, type: TokenTypeEnum.OTP_TMP_TOKEN },
       {
         secret: this.jwtSecret,
-        expiresIn: this.temporaryTokenExpiration as any,
+        expiresIn: this.temporaryTokenExpiration as unknown as number,
       },
     );
   }

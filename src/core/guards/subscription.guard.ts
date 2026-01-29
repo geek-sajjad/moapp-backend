@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { REQUIRE_ACTIVE_SUBSCRIPTION_KEY } from '../decorators/require-active-subscription.decorator';
-import { UserPayload } from '../types';
 
 @Injectable()
 export class SubscriptionGuard implements CanActivate {
@@ -26,7 +25,7 @@ export class SubscriptionGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user: UserPayload = request.user;
+    const { user } = request;
 
     // Check if user exists
     if (!user) {
