@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { BaseRepository } from 'src/core/repositories/base.repository';
 import { TransactionEntity } from '../entities';
+import { TransactionTypeEnum } from '../enums/transaction-type.enum';
 
 export class TransactionRepository extends BaseRepository<TransactionEntity> {
   constructor(dataSource: DataSource) {
@@ -24,54 +25,76 @@ export class TransactionRepository extends BaseRepository<TransactionEntity> {
   }
 
   async getCustomerBalance(customerId: string): Promise<{
-    totalCredit: number;
-    totalDebit: number;
-    balance: number;
+    totalBalance: number;
     totalTransactions: number;
+    totalType: TransactionTypeEnum;
   }> {
-    const result = await this.createQueryBuilder('transaction')
-      .select('SUM(transaction.creditAmount)', 'totalCredit')
-      .addSelect('SUM(transaction.debitAmount)', 'totalDebit')
+    // const result = await this.createQueryBuilder('transaction')
+    //   .select('SUM(transaction.creditAmount)', 'totalCredit')
+    //   .addSelect('SUM(transaction.debitAmount)', 'totalDebit')
+    //   .addSelect('COUNT(*)', 'totalTransactions')
+    //   .where('transaction.customerId = :customerId', { customerId })
+    //   .getRawOne();
+
+    // const totalCredit = parseFloat(result?.totalCredit || '0');
+    // const totalDebit = parseFloat(result?.totalDebit || '0');
+    // const balance = totalCredit - totalDebit;
+    // const totalTransactions = parseInt(result?.totalTransactions || '0', 10);
+
+    const res = await this.createQueryBuilder('transaction')
+      .select(
+        `
+        SUM(
+          CASE WHEN transaction.type = 'CREDIT' THEN transaction.amount ELSE -transaction.amount END
+        )
+        `,
+        'totalBalance',
+      )
       .addSelect('COUNT(*)', 'totalTransactions')
       .where('transaction.customerId = :customerId', { customerId })
       .getRawOne();
 
-    const totalCredit = parseFloat(result?.totalCredit || '0');
-    const totalDebit = parseFloat(result?.totalDebit || '0');
-    const balance = totalCredit - totalDebit;
-    const totalTransactions = parseInt(result?.totalTransactions || '0', 10);
+    const totalBalance = parseFloat(res?.totalBalance || '0');
+    const totalTransactions = parseInt(res?.totalTransactions || '0', 10);
 
     return {
-      totalCredit,
-      totalDebit,
-      balance,
+      totalBalance: Math.abs(totalBalance),
       totalTransactions,
+      totalType:
+        totalBalance > 0
+          ? TransactionTypeEnum.CREDIT
+          : TransactionTypeEnum.DEBIT,
     };
   }
 
   async getUserTotalBalance(userId: string): Promise<{
-    totalCredit: number;
-    totalDebit: number;
-    balance: number;
+    totalBalance: number;
     totalTransactions: number;
+    totalType: TransactionTypeEnum;
   }> {
-    const result = await this.createQueryBuilder('transaction')
-      .select('SUM(transaction.creditAmount)', 'totalCredit')
-      .addSelect('SUM(transaction.debitAmount)', 'totalDebit')
+    const res = await this.createQueryBuilder('transaction')
+      .select(
+        `
+        SUM(
+          CASE WHEN transaction.type = 'CREDIT' THEN transaction.amount ELSE -transaction.amount END
+        )
+        `,
+        'totalBalance',
+      )
       .addSelect('COUNT(*)', 'totalTransactions')
       .where('transaction.userId = :userId', { userId })
       .getRawOne();
 
-    const totalCredit = parseFloat(result?.totalCredit || '0');
-    const totalDebit = parseFloat(result?.totalDebit || '0');
-    const balance = totalCredit - totalDebit;
-    const totalTransactions = parseInt(result?.totalTransactions || '0', 10);
+    const totalBalance = parseFloat(res?.totalBalance || '0');
+    const totalTransactions = parseInt(res?.totalTransactions || '0', 10);
 
     return {
-      totalCredit,
-      totalDebit,
-      balance,
+      totalBalance: Math.abs(totalBalance),
       totalTransactions,
+      totalType:
+        totalBalance > 0
+          ? TransactionTypeEnum.CREDIT
+          : TransactionTypeEnum.DEBIT,
     };
   }
 }

@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../entities';
 import { TransactionRepository } from '../repositories';
 import { CreateTransactionDto } from '../dto/requests';
@@ -9,7 +8,6 @@ import { CustomerService } from 'src/modules/customer/services';
 @Injectable()
 export class TransactionService {
   constructor(
-    @InjectRepository(TransactionEntity)
     private readonly transactionRepository: TransactionRepository,
     private readonly customerService: CustomerService,
   ) {}
@@ -24,8 +22,6 @@ export class TransactionService {
     const transaction = this.transactionRepository.create({
       ...createDto,
       userId,
-      debitAmount: createDto.debitAmount || 0,
-      creditAmount: createDto.creditAmount || 0,
     });
     return this.transactionRepository.save(transaction);
   }

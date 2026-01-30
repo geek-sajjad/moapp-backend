@@ -3,16 +3,25 @@ import { BaseEntity } from 'src/core/entities';
 import { AutoMap } from '@automapper/classes';
 import { CustomerEntity } from 'src/modules/customer/entities';
 import { UserEntity } from 'src/modules/user/entities';
+import { TransactionTypeEnum } from '../enums/transaction-type.enum';
 
 @Entity('transactions')
 export class TransactionEntity extends BaseEntity {
-  @AutoMap()
-  @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
-  debitAmount: number;
+  // @AutoMap()
+  // @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  // debitAmount: number;
+
+  // @AutoMap()
+  // @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  // creditAmount: number;
 
   @AutoMap()
   @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
-  creditAmount: number;
+  amount: number;
+
+  @AutoMap()
+  @Column({ enum: [TransactionTypeEnum] })
+  type: TransactionTypeEnum;
 
   @AutoMap()
   @Column({ type: 'date' })

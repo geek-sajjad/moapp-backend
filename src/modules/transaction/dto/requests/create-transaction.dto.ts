@@ -6,28 +6,37 @@ import {
   IsNumber,
   IsDateString,
   Min,
+  IsEnum,
 } from 'class-validator';
+import { TransactionTypeEnum } from '../../enums/transaction-type.enum';
 
 export class CreateTransactionDto {
   @ApiProperty({
-    description: 'Debit amount (money out)',
+    description: 'amount',
     example: 50000,
     default: 0,
   })
   @IsNumber({}, { message: 'validation.MUST_BE_NUMBER' })
-  @Min(0, { message: 'validation.MIN_0' })
+  @Min(1, { message: 'validation.MIN_1000' })
   @IsOptional()
-  debitAmount?: number;
+  amount: number;
+
+  // @ApiProperty({
+  //   description: 'Credit amount (money in)',
+  //   example: 30000,
+  //   default: 0,
+  // })
+  // @IsNumber({}, { message: 'validation.MUST_BE_NUMBER' })
+  // @Min(0, { message: 'validation.MIN_0' })
+  // @IsOptional()
+  // creditAmount?: number;
 
   @ApiProperty({
-    description: 'Credit amount (money in)',
-    example: 30000,
-    default: 0,
+    description: 'Transaction type',
+    example: 'CREDIT',
   })
-  @IsNumber({}, { message: 'validation.MUST_BE_NUMBER' })
-  @Min(0, { message: 'validation.MIN_0' })
-  @IsOptional()
-  creditAmount?: number;
+  @IsEnum(TransactionTypeEnum)
+  type: TransactionTypeEnum;
 
   @ApiProperty({
     description: 'Transaction date',

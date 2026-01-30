@@ -1,24 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { TransactionTypeEnum } from '../../enums/transaction-type.enum';
 
 export class TransactionSummaryDto {
   @ApiProperty({
-    description: 'Total amount they owe me (CREDIT)',
-    example: 100000,
-  })
-  totalCredit: number;
-
-  @ApiProperty({
-    description: 'Total amount I owe them (DEBIT)',
+    description: 'Total amount',
     example: 50000,
   })
-  totalDebit: number;
+  totalBalance: number;
 
   @ApiProperty({
-    description:
-      'Net balance (positive means they owe me, negative means I owe them)',
-    example: 50000,
+    description: 'transaction type',
+    example: 'CREDIT',
   })
-  balance: number;
+  totalType: TransactionTypeEnum;
 
   @ApiProperty({
     description: 'Total number of transactions',

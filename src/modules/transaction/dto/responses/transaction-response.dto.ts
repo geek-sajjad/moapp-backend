@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from '@automapper/classes';
+import { TransactionTypeEnum } from '../../enums/transaction-type.enum';
 
 export class TransactionResponseDto {
   @AutoMap()
@@ -9,19 +10,32 @@ export class TransactionResponseDto {
   })
   id: string;
 
-  @AutoMap()
-  @ApiProperty({
-    description: 'Debit amount (money out)',
-    example: 50000,
-  })
-  debitAmount: number;
+  // @AutoMap()
+  // @ApiProperty({
+  //   description: 'Debit amount (money out)',
+  //   example: 50000,
+  // })
+  // debitAmount: number;
+
+  // @AutoMap()
+  // @ApiProperty({
+  //   description: 'Credit amount (money in)',
+  //   example: 30000,
+  // })
+  // creditAmount: number;
 
   @AutoMap()
   @ApiProperty({
-    description: 'Credit amount (money in)',
+    description: 'amount',
     example: 30000,
   })
-  creditAmount: number;
+  amount: number;
+
+  @AutoMap()
+  @ApiProperty({
+    description: 'enum type CREDIT, DEBIT',
+  })
+  type: TransactionTypeEnum;
 
   @AutoMap()
   @ApiProperty({

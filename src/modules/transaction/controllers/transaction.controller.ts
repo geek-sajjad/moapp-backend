@@ -38,7 +38,7 @@ export class TransactionController {
     @CurrentUser() user: UserPayload,
     @Body() createDto: CreateTransactionDto,
   ): Promise<TransactionResponseDto> {
-    return await this.transactionService.create(user.id, createDto);
+    return this.transactionService.create(user.id, createDto);
   }
 
   @Get('summary')
@@ -48,7 +48,7 @@ export class TransactionController {
   async getUserTotalSummary(
     @CurrentUser() user: UserPayload,
   ): Promise<TransactionSummaryDto> {
-    return await this.transactionService.getUserTotalSummary(user.id);
+    return this.transactionService.getUserTotalSummary(user.id);
   }
 
   @Get('customer/:customerId')
@@ -63,7 +63,7 @@ export class TransactionController {
     @CurrentUser() user: UserPayload,
     @Param('customerId', ParseUUIDPipe) customerId: string,
   ): Promise<TransactionResponseDto[]> {
-    return await this.transactionService.findAllByCustomer(customerId, user.id);
+    return this.transactionService.findAllByCustomer(customerId, user.id);
   }
 
   @Get('customer/:customerId/summary')
@@ -78,10 +78,7 @@ export class TransactionController {
     @CurrentUser() user: UserPayload,
     @Param('customerId', ParseUUIDPipe) customerId: string,
   ): Promise<TransactionSummaryDto> {
-    return await this.transactionService.getCustomerSummary(
-      customerId,
-      user.id,
-    );
+    return this.transactionService.getCustomerSummary(customerId, user.id);
   }
 
   @Get(':id/customer/:customerId')
@@ -103,6 +100,6 @@ export class TransactionController {
     @Param('id', ParseUUIDPipe) id: string,
     @Param('customerId', ParseUUIDPipe) customerId: string,
   ): Promise<TransactionResponseDto> {
-    return await this.transactionService.findOne(id, customerId, user.id);
+    return this.transactionService.findOne(id, customerId, user.id);
   }
 }
