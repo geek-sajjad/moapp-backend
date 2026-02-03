@@ -22,7 +22,10 @@ import {
   TransactionResponseDto,
   TransactionSummaryDto,
 } from '../dto/responses';
-import { RequireActiveSubscription } from 'src/core/decorators';
+import {
+  RequireActiveSubscription,
+  ApiResponseWithModel,
+} from 'src/core/decorators';
 
 @ApiTags('Transactions')
 @UseGuards(AuthGuard, SubscriptionGuard)
@@ -34,6 +37,7 @@ export class TransactionController {
   @Post()
   @RequireActiveSubscription()
   @ApiOperation({ summary: 'Create a new transaction' })
+  @ApiResponseWithModel(TransactionResponseDto, 'Create a new transaction')
   async create(
     @CurrentUser() user: UserPayload,
     @Body() createDto: CreateTransactionDto,
@@ -45,6 +49,10 @@ export class TransactionController {
   @ApiOperation({
     summary: 'Get total summary of all transactions for current user',
   })
+  @ApiResponseWithModel(
+    TransactionSummaryDto,
+    'Get total summary of all transactions for current user',
+  )
   async getUserTotalSummary(
     @CurrentUser() user: UserPayload,
   ): Promise<TransactionSummaryDto> {
@@ -59,6 +67,10 @@ export class TransactionController {
     type: 'string',
     format: 'uuid',
   })
+  @ApiResponseWithModel(
+    [TransactionResponseDto],
+    'Get all transactions for a customer',
+  )
   async findAllByCustomer(
     @CurrentUser() user: UserPayload,
     @Param('customerId', ParseUUIDPipe) customerId: string,
@@ -74,6 +86,10 @@ export class TransactionController {
     type: 'string',
     format: 'uuid',
   })
+  @ApiResponseWithModel(
+    TransactionSummaryDto,
+    'Get transaction summary for a customer',
+  )
   async getCustomerSummary(
     @CurrentUser() user: UserPayload,
     @Param('customerId', ParseUUIDPipe) customerId: string,
@@ -95,6 +111,7 @@ export class TransactionController {
     type: 'string',
     format: 'uuid',
   })
+  @ApiResponseWithModel(TransactionResponseDto, 'Get transaction by ID')
   async findOne(
     @CurrentUser() user: UserPayload,
     @Param('id', ParseUUIDPipe) id: string,
