@@ -1,31 +1,18 @@
-# Base image
-FROM node:22.14-alpine3.21 AS base
+
+FROM node:22.14-alpine3.21
+
 WORKDIR /app
 
-# Stage 1: Install all dependencies (including dev)
-FROM base AS deps
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN corepack enable
 
-# Stage 2: Build the app
-FROM base AS builder
+
+COPY package.json pnpm-lock.yaml .
+
+RUN pnpm install
+
 COPY . .
-COPY --from=deps /app/node_modules ./node_modules
-RUN yarn build
 
-# Stage 3: Create production image
-FROM base AS runner
+RUN pnpm run build
 
-ENV NODE_ENV=development
-ENV APP_PORT=8080
 
-COPY --from=builder /app/dist ./dist
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json ./
-
-# Optional non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
-
-EXPOSE $APP_PORT
-CMD ["node", "--max-old-space-size=400 dist/main.js"]
+CMD ["node", "dist/main.js"]

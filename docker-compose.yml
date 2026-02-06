@@ -1,33 +1,46 @@
-version: '3.8'
-
 services:
-  mongo:
-    image: mongo:5
-    container_name: nest_mongo
-    ports:
-      - "27017:27017"
+  postgres:
+    image: postgres:15-alpine
+    container_name: daftar-moein-postgres
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-    volumes:
-      - mongo_data:/data/db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-daftarmoein}
+    ports:
+      # - "${POSTGRES_PORT:-5432}:5432" # HOST port:container port | this line reads from .env file
+      - '5432:5432' # HOST port:container port | this line reads from .env file
 
-  nest_app:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nest_app
+    container_name: daftar-moein-backend-nestjs
     environment:
       NODE_ENV: ${NODE_ENV}
-      MONGO_URI: ${MONGO_URI}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      # DB_USERNAME: ${POSTGRES_USER:-postgres}
+      # DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      # DB_NAME: ${POSTGRES_DB:-daftarmoein}
     ports:
-      - "${APP_PORT}:${APP_PORT}"
+      - '${APP_PORT}:${APP_PORT}'
     depends_on:
-      - mongo
+      - postgres
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - '8736:80'
     volumes:
-      - .:/app
-      - /app/node_modules
-    command: npm run start:dev # For development only
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
 
 volumes:
-  mongo_data:
+  postgres_data:
