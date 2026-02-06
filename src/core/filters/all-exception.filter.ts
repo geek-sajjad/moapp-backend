@@ -16,7 +16,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly configService: ConfigService) {}
 
   async catch(exception: any, host: ArgumentsHost) {
-    console.log('exception', exception);
+    // console.log('exception', exception);
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();

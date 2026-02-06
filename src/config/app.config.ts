@@ -31,7 +31,11 @@ export async function ConfigApp(
   });
   // swagger configuration - only in development/staging to save memory
   const nodeEnv = configService.get('NODE_ENV');
-  if (nodeEnv === 'development' || nodeEnv === 'staging') {
+  if (
+    nodeEnv === 'development' ||
+    nodeEnv === 'staging' ||
+    nodeEnv === 'local'
+  ) {
     configSwagger(app, configService);
   }
 

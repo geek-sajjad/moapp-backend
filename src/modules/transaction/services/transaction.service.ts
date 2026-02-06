@@ -2,14 +2,18 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { TransactionEntity } from '../entities';
 import { TransactionRepository } from '../repositories';
 import { CreateTransactionDto } from '../dto/requests';
-import { TransactionSummaryDto } from '../dto/responses';
+import { TransactionResponseDto, TransactionSummaryDto } from '../dto/responses';
 import { CustomerService } from 'src/modules/customer/services';
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
 
 @Injectable()
 export class TransactionService {
   constructor(
     private readonly transactionRepository: TransactionRepository,
     private readonly customerService: CustomerService,
+    @InjectMapper()
+    private readonly mapper: Mapper,
   ) {}
 
   async create(
@@ -29,11 +33,16 @@ export class TransactionService {
   async findAllByCustomer(
     customerId: string,
     userId: string,
-  ): Promise<TransactionEntity[]> {
+  ): Promise<TransactionResponseDto[]> {
     // Verify that the customer belongs to the user
     await this.customerService.findOne(customerId, userId);
 
-    return this.transactionRepository.findByCustomerId(customerId);
+    const data = await this.transactionRepository.findByCustomerId(customerId);
+    return this.mapper.mapArray(
+      data,
+      TransactionEntity,
+      TransactionResponseDto,
+    );
   }
 
   async findOne(

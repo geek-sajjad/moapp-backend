@@ -7,11 +7,13 @@ import { TransactionEntity } from './entities';
 import { TransactionRepository } from './repositories';
 import { createRepository } from 'src/core/repositories/repository.factory';
 import { CustomerModule } from '../customer/customer.module';
+import { TransactionMappingProfile } from './mapping-profiles';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TransactionEntity]), CustomerModule],
   controllers: [TransactionController],
   providers: [
+    TransactionMappingProfile,
     TransactionService,
     {
       provide: TransactionRepository,

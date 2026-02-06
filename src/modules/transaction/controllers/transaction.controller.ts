@@ -26,6 +26,8 @@ import {
   RequireActiveSubscription,
   ApiResponseWithModel,
 } from 'src/core/decorators';
+import { ArrayPageDto, SinglePageDto } from 'src/core/dtos/responses';
+import { ResponseUtil } from 'src/core/utilities';
 
 @ApiTags('Transactions')
 @UseGuards(AuthGuard, SubscriptionGuard)
@@ -74,8 +76,12 @@ export class TransactionController {
   async findAllByCustomer(
     @CurrentUser() user: UserPayload,
     @Param('customerId', ParseUUIDPipe) customerId: string,
-  ): Promise<TransactionResponseDto[]> {
-    return this.transactionService.findAllByCustomer(customerId, user.id);
+  ): Promise<ArrayPageDto<TransactionResponseDto>> {
+    const transactions = await this.transactionService.findAllByCustomer(
+      customerId,
+      user.id,
+    );
+    return ResponseUtil.arrayData(transactions);
   }
 
   @Get('customer/:customerId/summary')
@@ -93,8 +99,12 @@ export class TransactionController {
   async getCustomerSummary(
     @CurrentUser() user: UserPayload,
     @Param('customerId', ParseUUIDPipe) customerId: string,
-  ): Promise<TransactionSummaryDto> {
-    return this.transactionService.getCustomerSummary(customerId, user.id);
+  ): Promise<SinglePageDto<TransactionSummaryDto>> {
+    const data = await this.transactionService.getCustomerSummary(
+      customerId,
+      user.id,
+    );
+    return ResponseUtil.singleData(data);
   }
 
   @Get(':id/customer/:customerId')
